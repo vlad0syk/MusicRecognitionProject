@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MusicRecognitionProject.Dao;
 using MusicRecognitionProject.Models.Events;
 
 namespace MusicRecognitionProject.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        public MainWindowViewModel(IEventAggregator eventAggregator)
+        public MainWindowViewModel(IEventAggregator eventAggregator, IMusicResultDao musicResultDao)
         {
             eventAggregator.GetEvent<TrackFoundEvent>().Subscribe(OnTrackFound);
+            musicResultDao.Read();
         }
 
         private int _selectedTab;

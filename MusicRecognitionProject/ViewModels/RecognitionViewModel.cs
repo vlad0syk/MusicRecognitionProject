@@ -25,12 +25,13 @@ namespace MusicRecognitionProject.ViewModels
         private readonly IInputDevicesDao _inputDevicesDao;
         private readonly IDialogCoordinator _dialogCoordinator;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IMusicResultDao _musicResultDao;
 
         private readonly GlobalSettings _globalSettings;
         private Button _button;
         private CancellationTokenSource _searchCancellationToken = new();
 
-        public RecognitionViewModel(IApiService apiService, IGlobalSettingsDao globalGlobalSettingsDao, IInputDevicesDao inputDevicesDao, IDialogCoordinator dialogCoordinator, IEventAggregator eventAggregator)
+        public RecognitionViewModel(IApiService apiService, IGlobalSettingsDao globalGlobalSettingsDao, IInputDevicesDao inputDevicesDao, IDialogCoordinator dialogCoordinator, IEventAggregator eventAggregator, IMusicResultDao musicResultDao)
         {
             OpenFileCommand = new DelegateCommand(OpenFile);
             RecognizeFromMicCommand = new DelegateCommand(RecognizeFromMic);
@@ -41,11 +42,12 @@ namespace MusicRecognitionProject.ViewModels
             _globalSettingsDao = globalGlobalSettingsDao;
             _inputDevicesDao = inputDevicesDao;
             _dialogCoordinator = dialogCoordinator;
+            _eventAggregator = eventAggregator;
+            _musicResultDao = musicResultDao;
 
             _globalSettings = _globalSettingsDao.Read();
             AvailableDevices = _inputDevicesDao.GetInputDevices();
             SelectedDevice = _globalSettings.SelectedInputDevice.DeviceId;
-            _eventAggregator = eventAggregator;
         }
 
         private bool _isNotSearching = true;
@@ -130,10 +132,11 @@ namespace MusicRecognitionProject.ViewModels
 
                         IsNotSearching = true;
                         IsSpinning = false;
-                        if (result.IsSuccessful)
+                        if (result.IsSuccessful && !string.IsNullOrEmpty(result.Content))
                         {
-                            string formattedJson = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(result.Content), Formatting.Indented);
-                            File.WriteAllText("result.txt", formattedJson);
+                            _musicResultDao.Add(JsonConvert.DeserializeObject<MusicRecognitionResult>(result.Content).Result);
+
+                            _eventAggregator.GetEvent<TrackFoundEvent>().Publish();
                         }
                     });
                 }
@@ -188,13 +191,9 @@ namespace MusicRecognitionProject.ViewModels
 
                             if (result.IsSuccessful && !string.IsNullOrEmpty(result.Content))
                             {
-                                File.WriteAllText("result.txt", result.Content);
+                                //File.WriteAllText("result.txt", result.Content);
 
-                                /*
-                                 *
-                                 * save track logic
-                                 *
-                                 */
+                                _musicResultDao.Add(JsonConvert.DeserializeObject<MusicRecognitionResult>(result.Content).Result);
 
                                 _eventAggregator.GetEvent<TrackFoundEvent>().Publish();
                                 break;

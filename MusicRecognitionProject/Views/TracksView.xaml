@@ -6,20 +6,82 @@
              xmlns:local="clr-namespace:MusicRecognitionProject.Views"
              xmlns:icons="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:translations="clr-namespace:MusicRecognitionTranslations;assembly=MusicRecognitionTranslations"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:converters="clr-namespace:MusicRecognitionProject.Converters"
              xmlns:viewModels="clr-namespace:MusicRecognitionProject.ViewModels"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="1080" d:DesignWidth="1920"
              d:DataContext="{d:DesignInstance viewModels:TracksViewModel}">
     <Grid>
+        <Grid.Resources>
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Rectangle Height="3" Margin="15,0" Fill="LightGray" VerticalAlignment="Top" Grid.Row="1"/>
 
-        
 
+        <Grid Grid.Row="0" Visibility="{Binding SelectedResult, Converter={StaticResource NullToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0" Grid.Row="0" Source="{Binding SelectedResult.Spotify.Album.Images[0].Url}" Stretch="Uniform" Margin="50"
+                   MaxHeight="600" MaxWidth="600" Cursor="Hand" MouseDown="Image_OnMouseDown"/>
+            <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" FontSize="36" Text="{Binding SelectedResult.Title}"/>
+
+            <StackPanel Grid.Column="1" Margin="100" FlowDirection="RightToLeft" HorizontalAlignment="Left" Cursor="Hand" MouseDown="StackPanel_OnMouseDown">
+
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap">
+                    <Run Text="{translations:Txt lblArtist}"/>
+                    <Run Text=":"/>
+                    <Run Text="{Binding SelectedResult.Artist}"/>
+                </TextBlock>
+
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap">
+                    <Run Text="{translations:Txt lblAlbum}"/>
+                    <Run Text=":"/>
+                    <Run Text="{Binding SelectedResult.Album}"/>
+                </TextBlock>
+
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap">
+                    <Run Text="{translations:Txt lblTimecode}"/>
+                    <Run Text=":"/>
+                    <Run Text="{Binding SelectedResult.Timecode}"/>
+                </TextBlock>
+
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap">
+                    <Run Text="{translations:Txt lblLabel}"/>
+                    <Run Text=":"/>
+                    <Run Text="{Binding SelectedResult.Label}"/>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+
+        
+        <ListView Grid.Row="1" ItemsSource="{Binding LastResults}" SelectedValue="{Binding SelectedResult}" Margin="15" FlowDirection="RightToLeft" HorizontalAlignment="Left">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Image Source="{Binding Spotify.Album.Images[1].Url}" Height="150"/>
+                        <TextBlock Text="{Binding Title}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Artist}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </UserControl>

@@ -22,7 +22,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IInputDevicesDao, InputDevicesDao>();
 
         containerRegistry.Register<IApiService, ApiService>();
-        containerRegistry.RegisterSingleton<IGlobalSettingsDao, GlobalSettingsDao>();
+        containerRegistry.Register<IGlobalSettingsDao, GlobalSettingsDao>();
+        containerRegistry.Register<IMusicResultDao, MusicResultDao>();
     }
 }
 

@@ -13,6 +13,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicRecognitionProject.ViewModels;
 
 namespace MusicRecognitionProject.Views
 {
@@ -24,6 +25,48 @@ namespace MusicRecognitionProject.Views
         public TracksView()
         {
             InitializeComponent();
+        }
+
+        private void StackPanel_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var selected = ((sender as StackPanel).DataContext as TracksViewModel).SelectedResult;
+            if (selected != null)
+            {
+                string url = "https://open.spotify.com/track/" + selected.Spotify.Id; // Assuming SelectedResult has a property Url
+                try
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open URL: {ex.Message}");
+                }
+            }
+        }
+
+        private void Image_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var selected = ((sender as Image).DataContext as TracksViewModel).SelectedResult;
+            if (selected != null)
+            {
+                string url = "https://open.spotify.com/track/" + selected.Spotify.Id; // Assuming SelectedResult has a property Url
+                try
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open URL: {ex.Message}");
+                }
+            }
         }
     }
 }

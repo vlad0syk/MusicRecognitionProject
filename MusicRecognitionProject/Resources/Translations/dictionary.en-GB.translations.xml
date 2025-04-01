@@ -49,4 +49,17 @@
 	<data name="lblFoundNothing">
 		<value>No music was found... You can try again tho!</value>
 	</data>
+	
+	<data name="lblArtist">
+		<value>Artist</value>
+	</data>
+	<data name="lblAlbum">
+		<value>Album</value>
+	</data>
+	<data name="lblTimecode">
+		<value>Timecode</value>
+	</data>
+	<data name="lblLabel">
+		<value>Label</value>
+	</data>
 </root>

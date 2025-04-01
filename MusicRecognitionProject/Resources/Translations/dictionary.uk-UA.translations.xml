@@ -46,4 +46,17 @@
 	<data name="lblFoundNothing">
 		<value>Не вдалося знайти музику... Ви  можете спробувати ще раз!</value>
 	</data>
+
+	<data name="lblArtist">
+		<value>Виконавець</value>
+	</data>
+	<data name="lblAlbum">
+		<value>Альбом</value>
+	</data>
+	<data name="lblTimecode">
+		<value>Проміжок пошуку</value>
+	</data>
+	<data name="lblLabel">
+		<value>Лейбл</value>
+	</data>
 </root>
