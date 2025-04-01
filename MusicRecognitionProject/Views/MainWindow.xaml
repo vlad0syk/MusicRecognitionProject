@@ -4,16 +4,17 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:local="clr-namespace:MusicRecognitionProject"
+                      xmlns:views="clr-namespace:MusicRecognitionProject.Views"
                       xmlns:viewModels="clr-namespace:MusicRecognitionProject.ViewModels"
                       xmlns:prism="http://prismlibrary.com/"
                       mc:Ignorable="d"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-                      Title="MusicRecognitionProject" Height="450" Width="800"
+                      Title="lblMusicRecognitionProject" Height="450" Width="800"
                       d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
                       prism:ViewModelLocator.AutoWireViewModel="True"
                       WindowStartupLocation="CenterScreen"
-                      ResizeMode="NoResize"
-                      WindowState="Maximized"
+                      ResizeMode="CanMinimize"
+                      WindowState="Maximized" 
                       TitleCharacterCasing="Normal">
 
     <Window.Resources>
@@ -21,6 +22,11 @@
     </Window.Resources>
     
     <Grid>
-        
+        <controls:MetroTabControl Margin="{StaticResource Margin}">
+            <TabItem Header="lblHome">
+                <views:HomeView/>
+            </TabItem>
+            <TabItem Header="lblSettings"/>
+        </controls:MetroTabControl>
     </Grid>
 </controls:MetroWindow>
