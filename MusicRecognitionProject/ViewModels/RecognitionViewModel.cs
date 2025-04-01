@@ -115,7 +115,10 @@ namespace MusicRecognitionProject.ViewModels
                     while (true)
                     {
                         string outputFilePath = "tempFile.wav";
-                        int recordingDuration = 5; // seconds
+                        int recordingDuration = 10; // seconds
+
+                        if(File.Exists(outputFilePath))
+                           File.Delete(outputFilePath);
 
                         using (var waveIn = new WaveInEvent() { DeviceNumber = 0 })
                         using (var writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat))

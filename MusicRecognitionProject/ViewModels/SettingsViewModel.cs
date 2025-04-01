@@ -3,129 +3,182 @@ using MusicRecognitionProject.Helpers;
 using MusicRecognitionProject.Models;
 using MusicRecognitionTranslations;
 using System.Globalization;
+using MusicRecognitionProject.Models.Enums;
 
 namespace MusicRecognitionProject.ViewModels
 {
-    public class SettingsViewModel : BindableBase
-    {
-        private readonly ITranslationsDao   _translationsDao;
-        private readonly IInputDevicesDao   _inputDevicesDao;
-        private readonly IGlobalSettingsDao _globalSettingsDao;
+	public class SettingsViewModel : BindableBase
+	{
+		private readonly ITranslationsDao _translationsDao;
+		private readonly IInputDevicesDao _inputDevicesDao;
+		private readonly IGlobalSettingsDao _globalSettingsDao;
 
-        private readonly GlobalSettings _globalSettings = new GlobalSettings();
+		private readonly GlobalSettings _globalSettings = new GlobalSettings();
+		private readonly List<string> _selectedPlatforms = new List<string>();
 
-        #region string SelectedLanguage
+		#region string SelectedLanguage
 
-        private string _selectedLanguage; 
-        public string SelectedLanguage
-        {
-            get => _selectedLanguage;
-            set
-            {
-                SetProperty(ref _selectedLanguage, value);
-                {
-                    var culture = (from s in _availableLanguages
-                                   where new CultureInfo(s).NativeName == _selectedLanguage
-                                   select s).FirstOrDefault();
-                    Translations.Instance.CurrentLanguage = culture!;
-                    _translationsDao.SaveLanguage(culture!);
-                }
-            }
-        }
+		private string _selectedLanguage;
 
-        #endregion
+		public string SelectedLanguage
+		{
+			get => _selectedLanguage;
+			set
+			{
+				SetProperty(ref _selectedLanguage, value);
+				{
+					var culture = (from s in _availableLanguages
+						where new CultureInfo(s).NativeName == _selectedLanguage
+						select s).FirstOrDefault();
+					Translations.Instance.CurrentLanguage = culture!;
+					_translationsDao.SaveLanguage(culture!);
+				}
+			}
+		}
 
-        #region List<string> AvailableLanguages
+		#endregion
 
-        private List<string> _availableLanguages; 
-        public List<string> AvailableLanguages
-        {
-            get
-            {
-                List<string> result = new List<string>();
-                foreach (var s in _availableLanguages)
-                {
-                    var cultureInfo = new CultureInfo(s);
-                    result.Add(cultureInfo.NativeName);
-                }
-                return result;
-            }
-            set => SetProperty(ref _availableLanguages, value);
-        }
+		#region List<string> AvailableLanguages
 
-        #endregion
+		private List<string> _availableLanguages;
 
-        #region string SelectedInputDevice
+		public List<string> AvailableLanguages
+		{
+			get
+			{
+				List<string> result = new List<string>();
+				foreach (var s in _availableLanguages)
+				{
+					var cultureInfo = new CultureInfo(s);
+					result.Add(cultureInfo.NativeName);
+				}
 
-        private string _selectedInputDevice; 
-        public string SelectedInputDevice
-        {
-            get => _selectedInputDevice;
-            set => SetProperty(ref _selectedInputDevice, value);
-        }
+				return result;
+			}
+			set => SetProperty(ref _availableLanguages, value);
+		}
 
-        #endregion
+		#endregion
 
-        #region List<string> InputDevices
+		#region string SelectedInputDevice
 
-        private List<string> _inputDevices = new();
-        public List<string> InputDevices
-        {
-            get => _inputDevices;
-            set => SetProperty(ref _inputDevices, value);
-        }
+		private string _selectedInputDevice;
 
-        #endregion
+		public string SelectedInputDevice
+		{
+			get => _selectedInputDevice;
+			set => SetProperty(ref _selectedInputDevice, value);
+		}
 
-        #region string ApiToken
+		#endregion
 
-        private string _apiToken;
-        public string ApiToken
-        {
-            get => _apiToken;
-            set => SetProperty(ref _apiToken, value);
-        }
+		#region List<string> InputDevices
 
-        #endregion
+		private List<string> _inputDevices = new();
 
-        public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao, IGlobalSettingsDao globalSettingsDao)
-        {
-            _translationsDao                      = translationsDao;
-            _inputDevicesDao                      = inputDevicesDao;
-            _globalSettingsDao                    = globalSettingsDao;
-            var culture                           = _translationsDao.LoadLanguage();
-            AvailableLanguages                    = Translations.Instance.AvailableLanguages.ToList();
-            Translations.Instance.CurrentLanguage = culture;
-            CultureInfo info                      = new CultureInfo(culture);
-            _selectedLanguage                     = info.NativeName;
+		public List<string> InputDevices
+		{
+			get => _inputDevices;
+			set => SetProperty(ref _inputDevices, value);
+		}
 
-            var devices = inputDevicesDao.GetInputDevices();
+		#endregion
 
-            foreach (var device in devices)
-            {
-                InputDevices.Add(device.ProductName);
-            }
+		#region List<string> Platforms
 
-            _globalSettings = _globalSettingsDao.Read();
-            SelectedInputDevice = _globalSettings.SelectedInputDevice.ProductName;
+		private List<string> _platforms = new List<string>();
 
-            SaveCommand = new DelegateCommand(Save);
-        }
+		public List<string> Platforms
+		{
+			get => _platforms;
+			set => SetProperty(ref _platforms, value);
+		}
 
-        #region DelegateCommand SaveCommand
+		#endregion
 
-        public DelegateCommand SaveCommand { get; set; }
-        private void Save()
-        {
-            //var devices = _inputDevicesDao.GetInputDevices();
-            GlobalSettings globalSettings = new GlobalSettings
-            {
-                ApiToken = Cryptography.Encrypt(ApiToken),
-            };
+		#region string ApiToken
 
-            //_globalSettingsDao.Write();
-        }
+		private string _apiToken;
 
-        #endregion
-    }
+		public string ApiToken
+		{
+			get => _apiToken;
+			set => SetProperty(ref _apiToken, value);
+		}
+
+		#endregion
+
+		public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao,
+			IGlobalSettingsDao globalSettingsDao)
+		{
+			_translationsDao = translationsDao;
+			_inputDevicesDao = inputDevicesDao;
+			_globalSettingsDao = globalSettingsDao;
+			var culture = _translationsDao.LoadLanguage();
+			AvailableLanguages = Translations.Instance.AvailableLanguages.ToList();
+			Translations.Instance.CurrentLanguage = culture;
+			CultureInfo info = new CultureInfo(culture);
+			_selectedLanguage = info.NativeName;
+
+			var devices = inputDevicesDao.GetInputDevices();
+
+			foreach (var device in devices)
+			{
+				InputDevices.Add(device.ProductName);
+			}
+
+			_globalSettings = _globalSettingsDao.Read();
+			SelectedInputDevice = _globalSettings.SelectedInputDevice.ProductName;
+
+			Platforms = EnumToListConverter.ConvertPlatformsEnumToList();
+
+			SaveCommand = new DelegateCommand(Save);
+			CheckedCommand = new DelegateCommand(Checked);
+			UncheckedCommand = new DelegateCommand(Unchecked);
+		}
+
+		#region DelegateCommand SaveCommand
+
+		public DelegateCommand SaveCommand { get; }
+
+		private void Save()
+		{
+			var devices = _inputDevicesDao.GetInputDevices();
+			GlobalSettings globalSettings = new GlobalSettings
+			{
+				ApiToken = Cryptography.Encrypt(ApiToken),
+			};
+
+			foreach (var device in devices)
+			{
+				if (device.ProductName == SelectedInputDevice)
+				{
+					globalSettings.SelectedInputDevice =
+						new AudioDevice
+						{
+							Channels = device.Channels,
+							ManufacturerGuid = device.ManufacturerGuid,
+							ProductGuid = device.ProductGuid,
+							ProductName = device.ProductName
+						};
+				}
+			}
+
+			_globalSettingsDao.Write(globalSettings);
+		}
+
+		#endregion
+
+		public DelegateCommand CheckedCommand { get; }
+		private void Checked()
+		{
+
+		}
+
+		public DelegateCommand UncheckedCommand { get; }
+		private void Unchecked()
+		{
+
+		}
+	}
 }

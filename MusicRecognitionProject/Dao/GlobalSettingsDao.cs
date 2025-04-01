@@ -15,12 +15,13 @@ namespace MusicRecognitionProject.Dao
                 return new GlobalSettings();
             }
             string json = File.ReadAllText(_filePath);
-            return JsonConvert.DeserializeObject<GlobalSettings>(json)!;
+
+			return JsonConvert.DeserializeObject<GlobalSettings>(json)!;
         }
         public void Write(GlobalSettings globalSettings)
         {
             string json = JsonConvert.SerializeObject(globalSettings, Formatting.Indented);
-            File.WriteAllText(json, _filePath);
+            File.WriteAllText(_filePath, json);
         }
     }
 }

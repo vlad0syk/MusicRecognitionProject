@@ -6,11 +6,13 @@
              xmlns:local="clr-namespace:MusicRecognitionProject.Views"
              xmlns:viewModels="clr-namespace:MusicRecognitionProject.ViewModels"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:translations="clr-namespace:MusicRecognitionTranslations;assembly=MusicRecognitionTranslations"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:SettingsViewModel}"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Name="SettingsControl">
 
     <UserControl.Resources>
         <Thickness x:Key="Margin">5,5,5,5</Thickness>
@@ -52,7 +54,7 @@
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
             <ComboBox Height="40"
-                      Width="200"
+                      Width="400"
                       HorizontalAlignment="Left"
                       VerticalAlignment="Center"
                       Margin="{StaticResource Margin}"
@@ -67,7 +69,8 @@
                        HorizontalAlignment="Left"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <ListView Margin="{StaticResource Margin}">
+            <ListView Margin="{StaticResource Margin}"
+                      ItemsSource="{Binding Platforms}" Name="ListView">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
@@ -80,7 +83,16 @@
                                       VerticalAlignment="Center"
                                       Margin="{StaticResource Margin}"
                                       Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                                      Content=""/>
+                                      Content="{Binding}">
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger EventName="Checked">
+                                    <behaviors:InvokeCommandAction Command="{Binding CheckedCommand}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="Unchecked">
+                                    <behaviors:InvokeCommandAction Command="{Binding UncheckedCommand}"/>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </ToggleButton>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
