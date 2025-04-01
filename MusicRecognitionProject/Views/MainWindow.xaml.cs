@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using MahApps.Metro.Controls;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,12 +10,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MusicRecognitionProject;
+namespace MusicRecognitionProject.Views;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : MetroWindow
 {
     public MainWindow()
     {

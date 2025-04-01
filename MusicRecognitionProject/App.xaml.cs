@@ -1,5 +1,5 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using MahApps.Metro.Controls.Dialogs;
+using MusicRecognitionProject.Views;
 using System.Windows;
 
 namespace MusicRecognitionProject;
@@ -7,7 +7,15 @@ namespace MusicRecognitionProject;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App : PrismApplication
 {
+    protected override Window CreateShell()
+    {
+        return Container.Resolve<MainWindow>();
+    }
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
+    {
+        containerRegistry.RegisterSingleton<IDialogCoordinator, DialogCoordinator>();
+    }
 }
 
