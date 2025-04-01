@@ -21,40 +21,9 @@ namespace MusicRecognitionProject.Views
     /// </summary>
     public partial class HomeView : UserControl
     {
-        private bool _isSpinning;
         public HomeView()
         {
             InitializeComponent();
-        }
-
-        private void OnButtonClick(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-
-            if (!_isSpinning)
-            {
-                var rotateTransform = new RotateTransform();
-                button.RenderTransform = rotateTransform;
-                button.RenderTransformOrigin = new Point(0.5, 0.5);
-
-                var animation = new DoubleAnimation
-                {
-                    To = 360,
-                    Duration = new Duration(TimeSpan.FromSeconds(3)),
-                    RepeatBehavior = RepeatBehavior.Forever
-                };
-
-                rotateTransform.BeginAnimation(RotateTransform.AngleProperty, animation);
-                _isSpinning = true;
-            }
-            else
-            {
-                if (button.RenderTransform is RotateTransform rotateTransform)
-                {
-                    rotateTransform.BeginAnimation(RotateTransform.AngleProperty, null);
-                }
-                _isSpinning = false;
-            }
         }
     }
 }
