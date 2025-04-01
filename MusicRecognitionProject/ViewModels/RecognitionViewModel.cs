@@ -44,7 +44,7 @@ namespace MusicRecognitionProject.ViewModels
 
         private void ChangeAnimationState()
         {
-            if (!_isSpinning)
+            if (IsSpinning)
             {
                 var rotateTransform = new RotateTransform();
                 _button.RenderTransform = rotateTransform;
@@ -58,7 +58,6 @@ namespace MusicRecognitionProject.ViewModels
                 };
 
                 rotateTransform.BeginAnimation(RotateTransform.AngleProperty, animation);
-                _isSpinning = true;
             }
             else
             {
@@ -66,7 +65,6 @@ namespace MusicRecognitionProject.ViewModels
                 {
                     rotateTransform.BeginAnimation(RotateTransform.AngleProperty, null);
                 }
-                _isSpinning = false;
             }
         }
 
@@ -103,54 +101,60 @@ namespace MusicRecognitionProject.ViewModels
         public DelegateCommand RecognizeFromMicCommand { get; }
         private void RecognizeFromMic()
         {
-            if (IsSpinning)
+            try
             {
-                searchCancellationToken.Cancel();
-            }
-            else
-            {
-
-                IsSpinning = true;
-                IsNotSearching = false;
-                int count = 0;
-                while (true)
+                if (IsSpinning)
                 {
-                    string outputFilePath = "tempFile.wav";
-                    int recordingDuration = 5; // seconds
-
-                    using (var waveIn = new WaveInEvent() { DeviceNumber = 0 })
-                    using (var writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat))
-                    {
-                        waveIn.DataAvailable += (s, e) => writer.Write(e.Buffer, 0, e.BytesRecorded);
-                        waveIn.StartRecording();
-
-                        Thread.Sleep(recordingDuration * 1000);
-
-                        waveIn.StopRecording();
-                    }
-
-                    var result = _apiService.RecognizeAudio(outputFilePath, searchCancellationToken);
-
-                    Logger.OutputInfo("Search result: " + result.IsSuccessful);
-
-                    if (result.IsSuccessful)
-                    {
-                        string formattedJson = JsonConvert.SerializeObject(
-                            JsonConvert.DeserializeObject(result.Content),
-                            Formatting.Indented);
-                        File.WriteAllText("result.txt", formattedJson);
-                        break;
-                    }
-
-                    if (count++ >= 3)
-                    {
-                        MessageBox.Show("No result found", "Error");
-                        break;
-                    }
+                    searchCancellationToken.Cancel();
                 }
+                else
+                {
+                    IsSpinning = true;
+                    IsNotSearching = false;
+                    int count = 0;
+                    while (true)
+                    {
+                        string outputFilePath = "tempFile.wav";
+                        int recordingDuration = 5; // seconds
 
-                IsSpinning = false;
-                IsNotSearching = true;
+                        using (var waveIn = new WaveInEvent() { DeviceNumber = 0 })
+                        using (var writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat))
+                        {
+                            waveIn.DataAvailable += (s, e) => writer.Write(e.Buffer, 0, e.BytesRecorded);
+                            waveIn.StartRecording();
+
+                            Thread.Sleep(recordingDuration * 1000);
+
+                            waveIn.StopRecording();
+                        }
+
+                        var result = _apiService.RecognizeAudio(outputFilePath, searchCancellationToken);
+
+                        Logger.OutputInfo("Search result: " + result.IsSuccessful);
+
+                        if (result.IsSuccessful)
+                        {
+                            string formattedJson = JsonConvert.SerializeObject(
+                                JsonConvert.DeserializeObject(result.Content),
+                                Formatting.Indented);
+                            File.WriteAllText("result.txt", formattedJson);
+                            break;
+                        }
+
+                        if (count++ >= 3)
+                        {
+                            MessageBox.Show("No result found", "Error");
+                            break;
+                        }
+                    }
+
+                    IsSpinning = false;
+                    IsNotSearching = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInfo(ex);
             }
         }
         //todo: change device number

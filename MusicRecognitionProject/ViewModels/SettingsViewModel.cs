@@ -68,7 +68,7 @@ namespace MusicRecognitionProject.ViewModels
 
         #region List<string> InputDevices
 
-        private List<string> _inputDevices;
+        private List<string> _inputDevices = new();
         public List<string> InputDevices
         {
             get => _inputDevices;
