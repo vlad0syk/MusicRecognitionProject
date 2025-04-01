@@ -3,7 +3,9 @@ using MusicRecognitionProject.Helpers;
 using MusicRecognitionProject.Models;
 using MusicRecognitionTranslations;
 using System.Globalization;
+using Microsoft.VisualBasic.Devices;
 using MusicRecognitionProject.Models.Enums;
+using SpotifyAPI.Web;
 
 namespace MusicRecognitionProject.ViewModels
 {
@@ -13,13 +15,11 @@ namespace MusicRecognitionProject.ViewModels
 		private readonly IInputDevicesDao _inputDevicesDao;
 		private readonly IGlobalSettingsDao _globalSettingsDao;
 
-		private readonly GlobalSettings _globalSettings = new GlobalSettings();
-		private readonly List<string> _selectedPlatforms = new List<string>();
+		private readonly GlobalSettings _globalSettings;
 
 		#region string SelectedLanguage
 
 		private string _selectedLanguage;
-
 		public string SelectedLanguage
 		{
 			get => _selectedLanguage;
@@ -36,12 +36,18 @@ namespace MusicRecognitionProject.ViewModels
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region List<string> AvailableLanguages
+        private List<SelectableViewModel<Platforms>> _platforms = new();
+        public List<SelectableViewModel<Platforms>> Platforms
+        {
+			get => _platforms;
+            set => SetProperty(ref _platforms, value);
+        }
 
-		private List<string> _availableLanguages;
+        #region List<string> AvailableLanguages
 
+        private List<string> _availableLanguages;
 		public List<string> AvailableLanguages
 		{
 			get
@@ -62,9 +68,8 @@ namespace MusicRecognitionProject.ViewModels
 
 		#region string SelectedInputDevice
 
-		private string _selectedInputDevice;
-
-		public string SelectedInputDevice
+		private AudioDevice _selectedInputDevice;
+		public AudioDevice SelectedInputDevice
 		{
 			get => _selectedInputDevice;
 			set => SetProperty(ref _selectedInputDevice, value);
@@ -74,9 +79,8 @@ namespace MusicRecognitionProject.ViewModels
 
 		#region List<string> InputDevices
 
-		private List<string> _inputDevices = new();
-
-		public List<string> InputDevices
+		private List<AudioDevice> _inputDevices = new();
+		public List<AudioDevice> InputDevices
 		{
 			get => _inputDevices;
 			set => SetProperty(ref _inputDevices, value);
@@ -84,22 +88,10 @@ namespace MusicRecognitionProject.ViewModels
 
 		#endregion
 
-		#region List<string> Platforms
-
-		private List<string> _platforms = new List<string>();
-
-		public List<string> Platforms
-		{
-			get => _platforms;
-			set => SetProperty(ref _platforms, value);
-		}
-
-		#endregion
 
 		#region string ApiToken
 
 		private string _apiToken;
-
 		public string ApiToken
 		{
 			get => _apiToken;
@@ -108,8 +100,7 @@ namespace MusicRecognitionProject.ViewModels
 
 		#endregion
 
-		public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao,
-			IGlobalSettingsDao globalSettingsDao)
+		public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao, IGlobalSettingsDao globalSettingsDao)
 		{
 			_translationsDao = translationsDao;
 			_inputDevicesDao = inputDevicesDao;
@@ -120,17 +111,17 @@ namespace MusicRecognitionProject.ViewModels
 			CultureInfo info = new CultureInfo(culture);
 			_selectedLanguage = info.NativeName;
 
-			var devices = inputDevicesDao.GetInputDevices();
+			Platforms = Enum.GetValues(typeof(Platforms)).Cast<Platforms>().Select(p => new SelectableViewModel<Platforms>(p)).ToList();
 
-			foreach (var device in devices)
-			{
-				InputDevices.Add(device.ProductName);
-			}
+            InputDevices = inputDevicesDao.GetInputDevices();
 
 			_globalSettings = _globalSettingsDao.Read();
-			SelectedInputDevice = _globalSettings.SelectedInputDevice.ProductName;
+			SelectedInputDevice = _globalSettings.SelectedInputDevice;
 
-			Platforms = EnumToListConverter.ConvertPlatformsEnumToList();
+            foreach (var platform in _globalSettings.SelectedPlatforms)
+            {
+                Platforms.First(p => p.Data == platform).IsSelected = true;
+            }
 
 			SaveCommand = new DelegateCommand(Save);
 			CheckedCommand = new DelegateCommand(Checked);
@@ -143,30 +134,17 @@ namespace MusicRecognitionProject.ViewModels
 
 		private void Save()
 		{
-			var devices = _inputDevicesDao.GetInputDevices();
-			GlobalSettings globalSettings = new GlobalSettings
-			{
-				ApiToken = Cryptography.Encrypt(ApiToken),
-			};
+            GlobalSettings globalSettings = new();
 
-			foreach (var device in devices)
-			{
-				if (device.ProductName == SelectedInputDevice)
-				{
-					globalSettings.SelectedInputDevice =
-						new AudioDevice
-						{
-							Channels = device.Channels,
-							ManufacturerGuid = device.ManufacturerGuid,
-							ProductGuid = device.ProductGuid,
-							ProductName = device.ProductName
-						};
-				}
-			}
+			if(!string.IsNullOrEmpty(ApiToken))
+				globalSettings.ApiToken = Cryptography.Encrypt(ApiToken);
 
-			_globalSettingsDao.Write(globalSettings);
+            globalSettings.SelectedInputDevice = SelectedInputDevice;
+            globalSettings.SelectedPlatforms = Platforms.Where(p => p.IsSelected).Select(p => p.Data).ToList();
+
+            _globalSettingsDao.Write(globalSettings);
 		}
-
+		 
 		#endregion
 
 		public DelegateCommand CheckedCommand { get; }

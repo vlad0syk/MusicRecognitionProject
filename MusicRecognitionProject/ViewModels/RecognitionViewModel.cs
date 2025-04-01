@@ -38,7 +38,7 @@ namespace MusicRecognitionProject.ViewModels
 
             _globalSettings = _globalSettingsDao.Read();
             AvailableDevices = _inputDevicesDao.GetInputDevices();
-            SelectedDevice = _globalSettings.SelectedInputDevice ?? AvailableDevices.FirstOrDefault();
+            SelectedDevice = _globalSettings.SelectedInputDevice;
         }
 
         private bool _isNotSearching = true;
@@ -55,15 +55,15 @@ namespace MusicRecognitionProject.ViewModels
             set => SetProperty(ref _isSpinning, value, ChangeAnimationState);
         }
 
-        private List<WaveInCapabilities> _availableDevices;
-        public List<WaveInCapabilities> AvailableDevices
+        private List<AudioDevice> _availableDevices;
+        public List<AudioDevice> AvailableDevices
         {
             get => _availableDevices;
             set => SetProperty(ref _availableDevices, value);
         }
 
-        private WaveInCapabilities _selectedDevice;
-        public WaveInCapabilities SelectedDevice
+        private AudioDevice _selectedDevice;
+        public AudioDevice SelectedDevice
         {
             get => _selectedDevice;
             set => SetProperty(ref _selectedDevice, value);
@@ -155,14 +155,12 @@ namespace MusicRecognitionProject.ViewModels
                         IsNotSearching = false;
                         int count = 0;
 
-                        var deviceNumber = AvailableDevices.IndexOf(SelectedDevice);
-
                         while (true)
                         {
                             string outputFilePath = "tempFile.wav";
                             int recordingDuration = 5; // seconds
 
-                            using (var waveIn = new WaveInEvent { DeviceNumber = deviceNumber })
+                            using (var waveIn = new WaveInEvent { DeviceNumber = SelectedDevice.DeviceId })
                             using (var writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat))
                             {
                                 waveIn.DataAvailable += (s, e) => writer.Write(e.Buffer, 0, e.BytesRecorded);

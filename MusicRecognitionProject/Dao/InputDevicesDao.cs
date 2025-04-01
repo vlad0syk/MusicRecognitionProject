@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Management;
+using MusicRecognitionProject.Models;
 using MusicRecognitionProject.Utils;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
@@ -8,17 +9,16 @@ namespace MusicRecognitionProject.Dao
 {
     public class InputDevicesDao : IInputDevicesDao
     {
-        public List<WaveInCapabilities> GetInputDevices()
+        public List<AudioDevice> GetInputDevices()
         {
-            List<WaveInCapabilities> inputDevices = new List<WaveInCapabilities>();
-
+            List<AudioDevice> inputDevices = new ();
             try
             {
                 var enumerator = new MMDeviceEnumerator();
                 for (int i = 0; i < WaveIn.DeviceCount; i++) 
                 {
-                    var inputDevice = WaveIn.GetCapabilities(i);
-                    //inputDevice.ProductName = (enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].FriendlyName);
+                    var inputDevice = new AudioDevice(WaveIn.GetCapabilities(i), i);
+                    inputDevice.ProductName = (enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].FriendlyName);
                     inputDevices.Add(inputDevice);
                 }
             }

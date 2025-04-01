@@ -8,6 +8,8 @@
              xmlns:prism="http://prismlibrary.com/"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:translations="clr-namespace:MusicRecognitionTranslations;assembly=MusicRecognitionTranslations"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:enums="clr-namespace:MusicRecognitionProject.Models.Enums"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:SettingsViewModel}"
@@ -43,7 +45,7 @@
                       Margin="{StaticResource Margin}"
                       Height="40"
                       ItemsSource="{Binding AvailableLanguages}"
-                      SelectedItem="{Binding SelectedLanguage}"/>
+                      SelectedValue="{Binding SelectedLanguage}"/>
         </StackPanel>
         <StackPanel Margin="{StaticResource Margin}"
                     Grid.Row="1">
@@ -59,7 +61,7 @@
                       VerticalAlignment="Center"
                       Margin="{StaticResource Margin}"
                       ItemsSource="{Binding InputDevices}"
-                      SelectedItem="{Binding SelectedInputDevice}"/>
+                      SelectedValue="{Binding SelectedInputDevice}"/>
         </StackPanel>
         <StackPanel Margin="{StaticResource Margin}"
                     Grid.Row="2">
@@ -69,33 +71,24 @@
                        HorizontalAlignment="Left"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <ListView Margin="{StaticResource Margin}"
+            <ItemsControl Margin="{StaticResource Margin}"
                       ItemsSource="{Binding Platforms}" Name="ListView">
-                <ListView.ItemsPanel>
+                <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <ToggleButton Height="40"
                                       HorizontalAlignment="Left"
                                       VerticalAlignment="Center"
                                       Margin="{StaticResource Margin}"
                                       Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                                      Content="{Binding}">
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger EventName="Checked">
-                                    <behaviors:InvokeCommandAction Command="{Binding CheckedCommand}"/>
-                                </behaviors:EventTrigger>
-                                <behaviors:EventTrigger EventName="Unchecked">
-                                    <behaviors:InvokeCommandAction Command="{Binding UncheckedCommand}"/>
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </ToggleButton>
+                                      Content="{Binding Data}"/>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </StackPanel>
         <StackPanel Grid.Row="3"
                     Margin="{StaticResource Margin}">

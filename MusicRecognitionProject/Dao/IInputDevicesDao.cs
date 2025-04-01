@@ -1,9 +1,10 @@
-﻿using NAudio.Wave;
+﻿using MusicRecognitionProject.Models;
+using NAudio.Wave;
 
 namespace MusicRecognitionProject.Dao
 {
     public interface IInputDevicesDao
     {
-        public List<WaveInCapabilities> GetInputDevices();
+        public List<AudioDevice> GetInputDevices();
     }
 }
