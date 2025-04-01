@@ -26,15 +26,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\vinyl.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Reference Include="MusicRecognitionTranslations">
+      <HintPath>Packages\MusicRecognitionTranslations.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="MusicRecognitionTranslations">
-      <HintPath>bin\Debug\net9.0-windows\MusicRecognitionTranslations.dll</HintPath>
-    </Reference>
+    <None Update="Resources\vinyl.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
