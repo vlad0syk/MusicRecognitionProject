@@ -107,7 +107,7 @@ namespace MusicRecognitionProject.ViewModels
             }
 
             _globalSettings = _globalSettingsDao.Read();
-            SelectedInputDevice = _globalSettings.SelectedInputDevice.ProductName;
+            SelectedInputDevice = _globalSettings.SelectedInputDevice?.ProductName;
 
             SaveCommand = new DelegateCommand(Save);
         }

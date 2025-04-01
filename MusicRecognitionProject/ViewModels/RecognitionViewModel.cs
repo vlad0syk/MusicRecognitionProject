@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Media;
 using Microsoft.Win32;
+using MusicRecognitionProject.Dao;
+using MusicRecognitionProject.Models;
 using Button = System.Windows.Controls.Button;
 using DialogResult = System.Windows.Forms.DialogResult;
 using MessageBox = System.Windows.MessageBox;
@@ -16,16 +18,27 @@ namespace MusicRecognitionProject.ViewModels
     class RecognitionViewModel : BindableBase
     {
         private readonly IApiService _apiService;
-        private Button _button;
-        private CancellationTokenSource searchCancellationToken = new();
+        private readonly IGlobalSettingsDao _globalSettingsDao;
+        private readonly IInputDevicesDao _inputDevicesDao;
+        private readonly GlobalSettings _globalSettings;
 
-        public RecognitionViewModel(IApiService apiService)
+        private Button _button;
+        private readonly CancellationTokenSource _searchCancellationToken = new();
+
+        public RecognitionViewModel(IApiService apiService, IGlobalSettingsDao globalGlobalSettingsDao, IInputDevicesDao inputDevicesDao)
         {
             OpenFileCommand = new DelegateCommand(OpenFile);
             RecognizeFromMicCommand = new DelegateCommand(RecognizeFromMic);
             ControlLoadedCommand = new DelegateCommand<Button>(ControlLoaded);
+            FooCommand = new DelegateCommand(Foo);
 
             _apiService = apiService;
+            _globalSettingsDao = globalGlobalSettingsDao;
+            _inputDevicesDao = inputDevicesDao;
+
+            _globalSettings = _globalSettingsDao.Read();
+            AvailableDevices = _inputDevicesDao.GetInputDevices();
+            SelectedDevice = _globalSettings.SelectedInputDevice ?? AvailableDevices.FirstOrDefault();
         }
 
         private bool _isNotSearching = true;
@@ -42,114 +55,80 @@ namespace MusicRecognitionProject.ViewModels
             set => SetProperty(ref _isSpinning, value, ChangeAnimationState);
         }
 
+        private List<WaveInCapabilities> _availableDevices;
+        public List<WaveInCapabilities> AvailableDevices
+        {
+            get => _availableDevices;
+            set => SetProperty(ref _availableDevices, value);
+        }
+
+        private WaveInCapabilities _selectedDevice;
+        public WaveInCapabilities SelectedDevice
+        {
+            get => _selectedDevice;
+            set => SetProperty(ref _selectedDevice, value);
+        }
+
         private void ChangeAnimationState()
         {
-            if (IsSpinning)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                var rotateTransform = new RotateTransform();
-                _button.RenderTransform = rotateTransform;
-                _button.RenderTransformOrigin = new Point(0.5, 0.5);
-
-                var animation = new DoubleAnimation
+                if (_isSpinning)
                 {
-                    To = 360,
-                    Duration = new Duration(TimeSpan.FromSeconds(3)),
-                    RepeatBehavior = RepeatBehavior.Forever
-                };
+                    var rotateTransform = new RotateTransform();
+                    _button.RenderTransform = rotateTransform;
+                    _button.RenderTransformOrigin = new Point(0.5, 0.5);
 
-                rotateTransform.BeginAnimation(RotateTransform.AngleProperty, animation);
-            }
-            else
-            {
-                if (_button.RenderTransform is RotateTransform rotateTransform)
-                {
-                    rotateTransform.BeginAnimation(RotateTransform.AngleProperty, null);
+                    var animation = new DoubleAnimation
+                    {
+                        To = 360,
+                        Duration = new Duration(TimeSpan.FromSeconds(3)),
+                        RepeatBehavior = RepeatBehavior.Forever
+                    };
+
+                    rotateTransform.BeginAnimation(RotateTransform.AngleProperty, animation);
                 }
-            }
+                else
+                {
+                    if (_button.RenderTransform is RotateTransform rotateTransform)
+                    {
+                        rotateTransform.BeginAnimation(RotateTransform.AngleProperty, null);
+                    }
+                }
+            });
         }
 
 
         public DelegateCommand OpenFileCommand { get; }
         private void OpenFile()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                Filter = "Audio Files|*.mp3;*.wav;*.flac;*.aac;*.ogg;*.wma"
-            };
-
-            if (openFileDialog.ShowDialog().Value)
-            {
-                IsNotSearching = false;
-                IsSpinning = true;
-                string filePath = openFileDialog.FileName;
-
-                var result = _apiService.RecognizeAudio(filePath, searchCancellationToken);
-
-                Logger.OutputInfo("Search result: " + result.IsSuccessful);
-
-                IsNotSearching = true;
-                IsSpinning = false;
-                if (result.IsSuccessful)
-                {
-                    string formattedJson = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(result.Content),
-                        Formatting.Indented);
-                    File.WriteAllText("result.txt", formattedJson);
-                }
-            }
-        }
-
-        public DelegateCommand RecognizeFromMicCommand { get; }
-        private void RecognizeFromMic()
-        {
             try
             {
-                if (IsSpinning)
+                OpenFileDialog openFileDialog = new OpenFileDialog
                 {
-                    searchCancellationToken.Cancel();
-                }
-                else
+                    Filter = "Audio Files|*.mp3;*.wav;*.flac;*.aac;*.ogg;*.wma"
+                };
+
+                if (openFileDialog.ShowDialog().Value)
                 {
-                    IsSpinning = true;
                     IsNotSearching = false;
-                    int count = 0;
-                    while (true)
+                    IsSpinning = true;
+                    string filePath = openFileDialog.FileName;
+
+                    Task.Factory.StartNew(() =>
                     {
-                        string outputFilePath = "tempFile.wav";
-                        int recordingDuration = 5; // seconds
-
-                        using (var waveIn = new WaveInEvent() { DeviceNumber = 0 })
-                        using (var writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat))
-                        {
-                            waveIn.DataAvailable += (s, e) => writer.Write(e.Buffer, 0, e.BytesRecorded);
-                            waveIn.StartRecording();
-
-                            Thread.Sleep(recordingDuration * 1000);
-
-                            waveIn.StopRecording();
-                        }
-
-                        var result = _apiService.RecognizeAudio(outputFilePath, searchCancellationToken);
+                        var result = _apiService.RecognizeAudio(filePath, _searchCancellationToken);
 
                         Logger.OutputInfo("Search result: " + result.IsSuccessful);
 
+                        IsNotSearching = true;
+                        IsSpinning = false;
                         if (result.IsSuccessful)
                         {
-                            string formattedJson = JsonConvert.SerializeObject(
-                                JsonConvert.DeserializeObject(result.Content),
-                                Formatting.Indented);
+                            string formattedJson = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(result.Content), Formatting.Indented);
                             File.WriteAllText("result.txt", formattedJson);
-                            break;
                         }
-
-                        if (count++ >= 3)
-                        {
-                            MessageBox.Show("No result found", "Error");
-                            break;
-                        }
-                    }
-
-                    IsSpinning = false;
-                    IsNotSearching = true;
+                    });
                 }
             }
             catch (Exception ex)
@@ -157,12 +136,87 @@ namespace MusicRecognitionProject.ViewModels
                 Logger.LogInfo(ex);
             }
         }
+
+        public DelegateCommand RecognizeFromMicCommand { get; }
+        private void RecognizeFromMic()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    if (IsSpinning)
+                    {
+                        _searchCancellationToken.Cancel();
+                        IsSpinning = false;
+                    }
+                    else
+                    {
+                        IsSpinning = true;
+                        IsNotSearching = false;
+                        int count = 0;
+
+                        var deviceNumber = AvailableDevices.IndexOf(SelectedDevice);
+
+                        while (true)
+                        {
+                            string outputFilePath = "tempFile.wav";
+                            int recordingDuration = 5; // seconds
+
+                            using (var waveIn = new WaveInEvent { DeviceNumber = deviceNumber })
+                            using (var writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat))
+                            {
+                                waveIn.DataAvailable += (s, e) => writer.Write(e.Buffer, 0, e.BytesRecorded);
+                                waveIn.StartRecording();
+
+                                Thread.Sleep(recordingDuration * 1000);
+
+                                waveIn.StopRecording();
+                            }
+
+                            var result = _apiService.RecognizeAudio(outputFilePath, _searchCancellationToken);
+
+                            Logger.OutputInfo("Search result: " + result.IsSuccessful);
+
+                            if (result.IsSuccessful)
+                            {
+                                string formattedJson =
+                                    JsonConvert.SerializeObject(JsonConvert.DeserializeObject(result.Content),
+                                        Formatting.Indented);
+                                File.WriteAllText("result.txt", formattedJson);
+                                break;
+                            }
+
+                            if (count++ >= 3)
+                            {
+                                MessageBox.Show("No result found", "Error");
+                                break;
+                            }
+                        }
+
+                        IsSpinning = false;
+                        IsNotSearching = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogInfo(ex);
+                }
+            });
+        }
         //todo: change device number
 
         public DelegateCommand<Button> ControlLoadedCommand { get; }
         private void ControlLoaded(Button button)
         {
             _button = button;
+        }
+
+
+
+        public DelegateCommand FooCommand { get; }
+        private void Foo()
+        {
+            IsSpinning = !IsSpinning;
         }
     }
 }

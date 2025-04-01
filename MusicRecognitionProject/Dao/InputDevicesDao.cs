@@ -1,4 +1,7 @@
-﻿using MusicRecognitionProject.Utils;
+﻿using System.Linq;
+using System.Management;
+using MusicRecognitionProject.Utils;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 
 namespace MusicRecognitionProject.Dao
@@ -11,9 +14,12 @@ namespace MusicRecognitionProject.Dao
 
             try
             {
+                var enumerator = new MMDeviceEnumerator();
                 for (int i = 0; i < WaveIn.DeviceCount; i++) 
                 {
-                    inputDevices.Add(WaveIn.GetCapabilities(i));
+                    var inputDevice = WaveIn.GetCapabilities(i);
+                    //inputDevice.ProductName = (enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].FriendlyName);
+                    inputDevices.Add(inputDevice);
                 }
             }
             catch (Exception ex)
