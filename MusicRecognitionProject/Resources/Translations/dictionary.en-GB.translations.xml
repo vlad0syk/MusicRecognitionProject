@@ -15,4 +15,19 @@
   <data name="lblLanguage">
     <value>Language</value>
   </data>
+  <data name="lblRecognition">
+    <value>Recognition</value>
+  </data>
+  <data name="lblInputDevice">
+    <value>InputDevice</value>
+  </data>
+  <data name="lblApiToken">
+    <value>Your API token</value>
+  </data>
+  <data name="lblPlatforms">
+    <value>Platforms</value>
+  </data>
+  <data name="lblSave">
+    <value>Save</value>
+  </data>
 </root>

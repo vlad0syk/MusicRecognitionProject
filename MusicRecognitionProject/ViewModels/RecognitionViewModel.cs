@@ -101,7 +101,7 @@ namespace MusicRecognitionProject.ViewModels
         public DelegateCommand RecognizeFromMicCommand { get; }
         private void RecognizeFromMic()
         {
-            try
+			try
             {
                 if (IsSpinning)
                 {

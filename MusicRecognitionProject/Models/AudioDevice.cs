@@ -13,5 +13,5 @@ namespace MusicRecognitionProject.Models
         public string ProductName { get; set; }
         public Guid ProductGuid { get; set; }
         public Guid ManufacturerGuid { get; set; }
-    }
+	}
 }
