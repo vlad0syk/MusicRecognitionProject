@@ -27,7 +27,9 @@
             <TabItem Header="{translations:Txt lblHome}">
                 <views:HomeView/>
             </TabItem>
-            <TabItem Header="{translations:Txt lblSettings}"/>
+            <TabItem Header="{translations:Txt lblSettings}">
+                <views:SettingsView/>
+            </TabItem>
         </controls:MetroTabControl>
     </Grid>
 </controls:MetroWindow>

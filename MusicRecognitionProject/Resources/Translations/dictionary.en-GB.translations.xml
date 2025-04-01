@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <data name="lblLanguage">
+    <value>Language</value>
+  </data>
+  <data name="lblMusicRecognitionProject">
+    <value>MusicRecognitionProject</value>
+  </data>
+  <data name="lblHome">
+    <value>Home</value>
+  </data>
+  <data name="lblSettings">
+    <value>Settings</value>
+  </data>
+  <data name="lblLanguage">
+    <value>Language</value>
+  </data>
+</root>

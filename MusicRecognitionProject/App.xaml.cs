@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
+using MusicRecognitionProject.Dao;
 using MusicRecognitionProject.Views;
 using System.Windows;
 
@@ -16,6 +17,7 @@ public partial class App : PrismApplication
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
         containerRegistry.RegisterSingleton<IDialogCoordinator, DialogCoordinator>();
+        containerRegistry.RegisterSingleton<ITranslationsDao, TranslationsDao>();
     }
 }
 
