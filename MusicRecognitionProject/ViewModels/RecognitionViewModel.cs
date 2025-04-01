@@ -38,7 +38,7 @@ namespace MusicRecognitionProject.ViewModels
 
             _globalSettings = _globalSettingsDao.Read();
             AvailableDevices = _inputDevicesDao.GetInputDevices();
-            SelectedDevice = _globalSettings.SelectedInputDevice;
+            SelectedDevice = _globalSettings.SelectedInputDevice.DeviceId;
         }
 
         private bool _isNotSearching = true;
@@ -62,8 +62,8 @@ namespace MusicRecognitionProject.ViewModels
             set => SetProperty(ref _availableDevices, value);
         }
 
-        private AudioDevice _selectedDevice;
-        public AudioDevice SelectedDevice
+        private int _selectedDevice;
+        public int SelectedDevice
         {
             get => _selectedDevice;
             set => SetProperty(ref _selectedDevice, value);
@@ -158,9 +158,12 @@ namespace MusicRecognitionProject.ViewModels
                         while (true)
                         {
                             string outputFilePath = "tempFile.wav";
-                            int recordingDuration = 5; // seconds
+                            if(File.Exists(outputFilePath))
+                                File.Delete(outputFilePath);
+                            
+                            int recordingDuration = 10; // seconds
 
-                            using (var waveIn = new WaveInEvent { DeviceNumber = SelectedDevice.DeviceId })
+                            using (var waveIn = new WaveInEvent { DeviceNumber = SelectedDevice })
                             using (var writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat))
                             {
                                 waveIn.DataAvailable += (s, e) => writer.Write(e.Buffer, 0, e.BytesRecorded);
@@ -175,7 +178,7 @@ namespace MusicRecognitionProject.ViewModels
 
                             Logger.OutputInfo("Search result: " + result.IsSuccessful);
 
-                            if (result.IsSuccessful)
+                             if (result.IsSuccessful && !string.IsNullOrEmpty(result.Content))
                             {
                                 string formattedJson =
                                     JsonConvert.SerializeObject(JsonConvert.DeserializeObject(result.Content),

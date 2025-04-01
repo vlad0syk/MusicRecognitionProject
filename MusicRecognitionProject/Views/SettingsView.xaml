@@ -61,7 +61,7 @@
                       VerticalAlignment="Center"
                       Margin="{StaticResource Margin}"
                       ItemsSource="{Binding InputDevices}"
-                      SelectedValue="{Binding SelectedInputDevice, Mode=TwoWay}"/>
+                      SelectedIndex="{Binding SelectedInputDevice, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Margin="{StaticResource Margin}"
                     Grid.Row="2">
@@ -85,7 +85,8 @@
                                       VerticalAlignment="Center"
                                       Margin="{StaticResource Margin}"
                                       Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                                      Content="{Binding Data}"/>
+                                      Content="{Binding Data}"
+                                      IsChecked="{Binding IsSelected}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

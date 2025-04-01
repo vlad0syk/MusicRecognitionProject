@@ -68,9 +68,9 @@ namespace MusicRecognitionProject.ViewModels
 
 		#region string SelectedInputDevice
 
-		private AudioDevice _selectedInputDevice;
-		public AudioDevice SelectedInputDevice
-		{
+		private int _selectedInputDevice;
+		public int SelectedInputDevice
+        {
 			get => _selectedInputDevice;
 			set => SetProperty(ref _selectedInputDevice, value);
 		}
@@ -116,7 +116,7 @@ namespace MusicRecognitionProject.ViewModels
             InputDevices = inputDevicesDao.GetInputDevices();
 
 			_globalSettings = _globalSettingsDao.Read();
-			SelectedInputDevice = _globalSettings.SelectedInputDevice;
+			SelectedInputDevice = _globalSettings.SelectedInputDevice.DeviceId;
 
             foreach (var platform in _globalSettings.SelectedPlatforms)
             {
@@ -139,7 +139,7 @@ namespace MusicRecognitionProject.ViewModels
 			if(!string.IsNullOrEmpty(ApiToken))
 				globalSettings.ApiToken = Cryptography.Encrypt(ApiToken);
 
-            globalSettings.SelectedInputDevice = SelectedInputDevice;
+            globalSettings.SelectedInputDevice = InputDevices[SelectedInputDevice];
             globalSettings.SelectedPlatforms = Platforms.Where(p => p.IsSelected).Select(p => p.Data).ToList();
 
             _globalSettingsDao.Write(globalSettings);

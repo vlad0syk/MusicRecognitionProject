@@ -16,11 +16,11 @@
     <Grid>
         <Button Content="Foo" Command="{Binding FooCommand}"/>
         <StackPanel>
-            <ComboBox Width="300" Height="40" Margin="25" IsEnabled="{Binding IsNotSearching}"
-                      ItemsSource="{Binding AvailableDevices}" SelectedValue="{Binding SelectedDevice}">
+            <ComboBox Width="300" Height="50" Margin="25" IsEnabled="{Binding IsNotSearching}"
+                      ItemsSource="{Binding AvailableDevices}" SelectedIndex="{Binding SelectedDevice}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding ProductName}" FontSize="14" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding ProductName}" FontSize="14"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
