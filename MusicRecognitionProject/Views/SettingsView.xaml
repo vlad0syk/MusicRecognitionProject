@@ -22,6 +22,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" 
@@ -56,7 +57,7 @@
                       VerticalAlignment="Center"
                       Margin="{StaticResource Margin}"
                       ItemsSource="{Binding InputDevices}"
-                      SelectedItem="{}"/>
+                      SelectedItem="{Binding SelectedInputDevice}"/>
         </StackPanel>
         <StackPanel Margin="{StaticResource Margin}"
                     Grid.Row="2">
@@ -66,36 +67,40 @@
                        HorizontalAlignment="Left"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <StackPanel Margin="{StaticResource Margin}"
-                        Orientation="Horizontal">
-                <ToggleButton Height="40"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Center"
-                              Margin="{StaticResource Margin}"
-                              Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                              Content=""/>
-                <ToggleButton Height="40"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Center"
-                              Margin="{StaticResource Margin}"
-                              Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                              Content=""/>
-                <ToggleButton Height="40"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Center"
-                              Margin="{StaticResource Margin}"
-                              Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                              Content=""/>
-                <ToggleButton Height="40"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Center"
-                              Margin="{StaticResource Margin}"
-                              Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                              Content=""/>
-            </StackPanel>
+            <ListView Margin="{StaticResource Margin}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ToggleButton Height="40"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center"
+                                      Margin="{StaticResource Margin}"
+                                      Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                                      Content=""/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackPanel>
-
-        <Button Grid.Row="3"
+        <StackPanel Grid.Row="3"
+                    Margin="{StaticResource Margin}">
+            <TextBlock Margin="{StaticResource Margin}"
+                       Text="{translations:Txt lblApiToken}"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center"
+                       FontSize="24"/>
+            <TextBox Width="400"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     FontSize="24"
+                     Margin="{StaticResource Margin}"
+                     Text="{Binding ApiToken}"/>
+        </StackPanel>
+        <Button Grid.Row="4"
                 Margin="{StaticResource Margin}"
                 Content="{translations:Txt lblSave}"
                 Height="30"

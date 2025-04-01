@@ -1,14 +1,18 @@
 ﻿using MusicRecognitionProject.Dao;
+using MusicRecognitionProject.Helpers;
+using MusicRecognitionProject.Models;
 using MusicRecognitionTranslations;
 using System.Globalization;
-using System.Collections.Generic;
 
 namespace MusicRecognitionProject.ViewModels
 {
     public class SettingsViewModel : BindableBase
     {
-        private readonly ITranslationsDao _translationsDao;
-        private readonly IInputDevicesDao _inputDevicesDao;
+        private readonly ITranslationsDao   _translationsDao;
+        private readonly IInputDevicesDao   _inputDevicesDao;
+        private readonly IGlobalSettingsDao _globalSettingsDao;
+
+        private readonly GlobalSettings _globalSettings = new GlobalSettings();
 
         #region string SelectedLanguage
 
@@ -73,15 +77,37 @@ namespace MusicRecognitionProject.ViewModels
 
         #endregion
 
-        public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao)
+        #region string ApiToken
+
+        private string _apiToken;
+        public string ApiToken
+        {
+            get => _apiToken;
+            set => SetProperty(ref _apiToken, value);
+        }
+
+        #endregion
+
+        public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao, IGlobalSettingsDao globalSettingsDao)
         {
             _translationsDao                      = translationsDao;
             _inputDevicesDao                      = inputDevicesDao;
+            _globalSettingsDao                    = globalSettingsDao;
             var culture                           = _translationsDao.LoadLanguage();
             AvailableLanguages                    = Translations.Instance.AvailableLanguages.ToList();
             Translations.Instance.CurrentLanguage = culture;
             CultureInfo info                      = new CultureInfo(culture);
             _selectedLanguage                     = info.NativeName;
+
+            var devices = inputDevicesDao.GetInputDevices();
+
+            foreach (var device in devices)
+            {
+                InputDevices.Add(device.ProductName);
+            }
+
+            _globalSettings = _globalSettingsDao.Read();
+            SelectedInputDevice = _globalSettings.SelectedInputDevice.ProductName;
 
             SaveCommand = new DelegateCommand(Save);
         }
@@ -91,7 +117,13 @@ namespace MusicRecognitionProject.ViewModels
         public DelegateCommand SaveCommand { get; set; }
         private void Save()
         {
-            var devices = _inputDevicesDao.GetInputDevices();
+            //var devices = _inputDevicesDao.GetInputDevices();
+            GlobalSettings globalSettings = new GlobalSettings
+            {
+                ApiToken = Cryptography.Encrypt(ApiToken),
+            };
+
+            //_globalSettingsDao.Write();
         }
 
         #endregion

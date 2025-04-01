@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NAudio.Wave;
 
 namespace MusicRecognitionProject.Dao
 {
     public interface IInputDevicesDao
     {
-        public List<string> GetInputDevices();
+        public List<WaveInCapabilities> GetInputDevices();
     }
 }
