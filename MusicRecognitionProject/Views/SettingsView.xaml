@@ -19,10 +19,13 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="{StaticResource Margin}"
+        <StackPanel Grid.Row="0" 
+                    Margin="{StaticResource Margin}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center">
             <TextBlock Margin="{StaticResource Margin}"
@@ -33,13 +36,68 @@
                        VerticalAlignment="Center"/>
             <ComboBox Width="200"
                       HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
                       Margin="{StaticResource Margin}"
                       Height="40"
                       ItemsSource="{Binding AvailableLanguages}"
                       SelectedItem="{Binding SelectedLanguage}"/>
         </StackPanel>
-        <StackPanel>
-            
+        <StackPanel Margin="{StaticResource Margin}"
+                    Grid.Row="1">
+            <TextBlock Margin="{StaticResource Margin}"
+                       Text="{translations:Txt lblInputDevice}"
+                       FontSize="24"
+                       HorizontalAlignment="Left"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <ComboBox Height="40"
+                      Width="200"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Margin="{StaticResource Margin}"
+                      ItemsSource="{}"/>
         </StackPanel>
+        <StackPanel Margin="{StaticResource Margin}"
+                    Grid.Row="2">
+            <TextBlock Text="{translations:Txt lblPlatforms}"
+                       Margin="{StaticResource Margin}"
+                       FontSize="24"
+                       HorizontalAlignment="Left"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <StackPanel Margin="{StaticResource Margin}"
+                        Orientation="Horizontal">
+                <ToggleButton Height="40"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Margin="{StaticResource Margin}"
+                              Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                              Content=""/>
+                <ToggleButton Height="40"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Margin="{StaticResource Margin}"
+                              Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                              Content=""/>
+                <ToggleButton Height="40"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Margin="{StaticResource Margin}"
+                              Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                              Content=""/>
+                <ToggleButton Height="40"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Margin="{StaticResource Margin}"
+                              Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                              Content=""/>
+            </StackPanel>
+        </StackPanel>
+
+        <Button Grid.Row="3"
+                Margin="{StaticResource Margin}"
+                Content="{translations:Txt lblSave}"
+                Height="30"
+                VerticalAlignment="Bottom"/>
     </Grid>
 </UserControl>

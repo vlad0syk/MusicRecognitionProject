@@ -8,6 +8,8 @@ namespace MusicRecognitionProject.ViewModels
     {
         private readonly ITranslationsDao _translationsDao;
 
+        
+
         #region string SelectedLanguage
 
         private string _selectedLanguage; 
