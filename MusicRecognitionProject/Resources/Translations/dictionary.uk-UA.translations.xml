@@ -3,6 +3,27 @@
   <data name="lblLanguage">
     <value>Мова</value>
   </data>
+  <data name="lblMusicRecognitionProject">
+    <value>Проєкт Розпізнавання Музики</value>
+  </data>
+  <data name="lblHome">
+    <value>Головна</value>
+  </data>
+  <data name="lblSettings">
+    <value>Налаштування</value>
+  </data>
+  <data name="lblRecognition">
+    <value>Розпізнавання</value>
+  </data>
+  <data name="lblInputDevice">
+    <value>Пристрій введення</value>
+  </data>
+  <data name="lblApiToken">
+    <value>Ваш API токен</value>
+  </data>
+  <data name="lblPlatforms">
+    <value>Платформи</value>
+  </data>
   <data name="lblSave">
     <value>Зберегти</value>
   </data>
