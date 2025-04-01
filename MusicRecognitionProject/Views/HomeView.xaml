@@ -13,9 +13,9 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Button Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.Circle}" Width="700" Height="700" Background="Transparent"
-                VerticalAlignment="Center" HorizontalAlignment="Center" Click="OnButtonClick">
-            <icons:PackIconPhosphorIcons Kind="VinylRecordLight" Width="650" Height="650" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.Circle}" Width="700" Height="700"
+                VerticalAlignment="Center" HorizontalAlignment="Center" Click="OnButtonClick" Background="Transparent">
+            <Image Source="pack://application:,,,/Resources/vinyl.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Button>
         <Rectangle Height="3" Margin="15,0" Fill="LightGray" VerticalAlignment="Top" Grid.Row="1"/>
 
