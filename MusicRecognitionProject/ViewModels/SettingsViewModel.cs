@@ -3,8 +3,10 @@ using MusicRecognitionProject.Helpers;
 using MusicRecognitionProject.Models;
 using MusicRecognitionTranslations;
 using System.Globalization;
+using System.IO;
 using Microsoft.VisualBasic.Devices;
 using MusicRecognitionProject.Models.Enums;
+using Newtonsoft.Json;
 using SpotifyAPI.Web;
 
 namespace MusicRecognitionProject.ViewModels
@@ -143,6 +145,14 @@ namespace MusicRecognitionProject.ViewModels
             globalSettings.SelectedPlatforms = Platforms.Where(p => p.IsSelected).Select(p => p.Data).ToList();
 
             _globalSettingsDao.Write(globalSettings);
+
+
+            string resultFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "result.txt");
+			string json = File.ReadAllText(resultFile);
+			var musicData = JsonConvert.DeserializeObject<MusicRecognitionResult>(json);
+			string resultFile1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "result1.txt");
+			string newJson = JsonConvert.SerializeObject(musicData, Formatting.Indented);
+			File.WriteAllText(resultFile1, newJson);
 		}
 		 
 		#endregion
