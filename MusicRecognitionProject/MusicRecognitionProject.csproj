@@ -26,6 +26,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Resources\vinyl.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="MusicRecognitionTranslations">
       <HintPath>bin\Debug\net9.0-windows\MusicRecognitionTranslations.dll</HintPath>
     </Reference>
