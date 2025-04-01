@@ -4,14 +4,35 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MusicRecognitionProject.Views"
+             xmlns:vm="clr-namespace:MusicRecognitionProject.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:translations="clr-namespace:MusicRecognitionTranslations;assembly=MusicRecognitionTranslations"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance vm:RecognitionViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Style="{StaticResource MahApps.Styles.Button.Circle}" Width="700" Height="700" BorderThickness="0"
-                VerticalAlignment="Center" HorizontalAlignment="Center" Click="OnButtonClick" Background="Transparent">
-            <Image Source="pack://application:,,,/Resources/vinyl.png" HorizontalAlignment="Center" VerticalAlignment="Top"
-                   Width="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=ActualHeight}"/>
+        <StackPanel>
+            <ComboBox Width="300" Height="40" Margin="25" IsEnabled="{Binding IsNotSearching}"/>
 
-        </Button>
+            <Button Style="{StaticResource MahApps.Styles.Button.Circle}" Width="700" Height="700" BorderThickness="0" Command="{Binding RecognizeFromMicCommand}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" Name="VinylButton"   CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Loaded">
+                        <i:InvokeCommandAction Command="{Binding ControlLoadedCommand}" CommandParameter="{Binding ElementName=VinylButton}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Image Source="pack://application:,,,/Resources/vinyl.png" HorizontalAlignment="Center" VerticalAlignment="Top"
+                       Width="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=ActualHeight}"/>
+            </Button>
+
+            <Label Content="or" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="18"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="{translations:Txt lblUploadFile}" Width="200" Height="50"
+                    Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsNotSearching}"/>
+
+        </StackPanel>
+
     </Grid>
 </UserControl>
