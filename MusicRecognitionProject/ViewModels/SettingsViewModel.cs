@@ -1,12 +1,14 @@
 ﻿using MusicRecognitionProject.Dao;
 using MusicRecognitionTranslations;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace MusicRecognitionProject.ViewModels
 {
     public class SettingsViewModel : BindableBase
     {
         private readonly ITranslationsDao _translationsDao;
+        private readonly IInputDevicesDao _inputDevicesDao;
 
         #region string SelectedLanguage
 
@@ -49,15 +51,49 @@ namespace MusicRecognitionProject.ViewModels
 
         #endregion
 
-        public SettingsViewModel(ITranslationsDao translationsDao)
+        #region string SelectedInputDevice
+
+        private string _selectedInputDevice; 
+        public string SelectedInputDevice
+        {
+            get => _selectedInputDevice;
+            set => SetProperty(ref _selectedInputDevice, value);
+        }
+
+        #endregion
+
+        #region List<string> InputDevices
+
+        private List<string> _inputDevices;
+        public List<string> InputDevices
+        {
+            get => _inputDevices;
+            set => SetProperty(ref _inputDevices, value);
+        }
+
+        #endregion
+
+        public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao)
         {
             _translationsDao                      = translationsDao;
+            _inputDevicesDao                      = inputDevicesDao;
             var culture                           = _translationsDao.LoadLanguage();
             AvailableLanguages                    = Translations.Instance.AvailableLanguages.ToList();
             Translations.Instance.CurrentLanguage = culture;
             CultureInfo info                      = new CultureInfo(culture);
             _selectedLanguage                     = info.NativeName;
+
+            SaveCommand = new DelegateCommand(Save);
         }
 
+        #region DelegateCommand SaveCommand
+
+        public DelegateCommand SaveCommand { get; set; }
+        private void Save()
+        {
+            var devices = _inputDevicesDao.GetInputDevices();
+        }
+
+        #endregion
     }
 }

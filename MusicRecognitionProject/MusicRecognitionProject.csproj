@@ -42,6 +42,7 @@
     <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="SoundFingerprinting" Version="11.4.0" />
     <PackageReference Include="SpotifyAPI.Web" Version="7.2.1" />
+    <PackageReference Include="System.Management" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
