@@ -55,7 +55,8 @@
                       HorizontalAlignment="Left"
                       VerticalAlignment="Center"
                       Margin="{StaticResource Margin}"
-                      ItemsSource="{}"/>
+                      ItemsSource="{Binding InputDevices}"
+                      SelectedItem="{}"/>
         </StackPanel>
         <StackPanel Margin="{StaticResource Margin}"
                     Grid.Row="2">
@@ -98,6 +99,7 @@
                 Margin="{StaticResource Margin}"
                 Content="{translations:Txt lblSave}"
                 Height="30"
-                VerticalAlignment="Bottom"/>
+                VerticalAlignment="Bottom"
+                Command="{Binding SaveCommand}"/>
     </Grid>
 </UserControl>

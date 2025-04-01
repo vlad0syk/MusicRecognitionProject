@@ -18,6 +18,7 @@ public partial class App : PrismApplication
     {
         containerRegistry.RegisterSingleton<IDialogCoordinator, DialogCoordinator>();
         containerRegistry.RegisterSingleton<ITranslationsDao, TranslationsDao>();
+        containerRegistry.RegisterSingleton<IInputDevicesDao, InputDevicesDao>();
     }
 }
 
