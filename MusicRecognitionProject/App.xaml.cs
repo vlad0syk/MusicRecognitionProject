@@ -2,6 +2,7 @@
 using MusicRecognitionProject.Dao;
 using MusicRecognitionProject.Views;
 using System.Windows;
+using MusicRecognitionProject.Services;
 
 namespace MusicRecognitionProject;
 
@@ -19,6 +20,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IDialogCoordinator, DialogCoordinator>();
         containerRegistry.RegisterSingleton<ITranslationsDao, TranslationsDao>();
         containerRegistry.RegisterSingleton<IInputDevicesDao, InputDevicesDao>();
+
+        containerRegistry.Register<IApiService, ApiService>();
         containerRegistry.RegisterSingleton<IGlobalSettingsDao, GlobalSettingsDao>();
     }
 }

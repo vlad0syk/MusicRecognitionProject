@@ -29,5 +29,10 @@ namespace MusicRecognitionProject.Utils
                 }
             }
         }
+
+        public static void OutputInfo(string info)
+        {
+            Debug.WriteLine($"[{DateTime.Now}  |  {Process.GetCurrentProcess().Id}] {info}");
+        }
     }
 }
