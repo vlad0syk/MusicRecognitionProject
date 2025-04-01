@@ -61,7 +61,7 @@
                       VerticalAlignment="Center"
                       Margin="{StaticResource Margin}"
                       ItemsSource="{Binding InputDevices}"
-                      SelectedValue="{Binding SelectedInputDevice}"/>
+                      SelectedValue="{Binding SelectedInputDevice, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Margin="{StaticResource Margin}"
                     Grid.Row="2">
