@@ -6,9 +6,12 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Media;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using MusicRecognitionProject.Dao;
 using MusicRecognitionProject.Models;
+using MusicRecognitionProject.Models.Events;
+using MusicRecognitionTranslations;
 using Button = System.Windows.Controls.Button;
 using DialogResult = System.Windows.Forms.DialogResult;
 using MessageBox = System.Windows.MessageBox;
@@ -20,12 +23,14 @@ namespace MusicRecognitionProject.ViewModels
         private readonly IApiService _apiService;
         private readonly IGlobalSettingsDao _globalSettingsDao;
         private readonly IInputDevicesDao _inputDevicesDao;
+        private readonly IDialogCoordinator _dialogCoordinator;
+        private readonly IEventAggregator _eventAggregator;
+
         private readonly GlobalSettings _globalSettings;
-
         private Button _button;
-        private readonly CancellationTokenSource _searchCancellationToken = new();
+        private CancellationTokenSource _searchCancellationToken = new();
 
-        public RecognitionViewModel(IApiService apiService, IGlobalSettingsDao globalGlobalSettingsDao, IInputDevicesDao inputDevicesDao)
+        public RecognitionViewModel(IApiService apiService, IGlobalSettingsDao globalGlobalSettingsDao, IInputDevicesDao inputDevicesDao, IDialogCoordinator dialogCoordinator, IEventAggregator eventAggregator)
         {
             OpenFileCommand = new DelegateCommand(OpenFile);
             RecognizeFromMicCommand = new DelegateCommand(RecognizeFromMic);
@@ -35,10 +40,12 @@ namespace MusicRecognitionProject.ViewModels
             _apiService = apiService;
             _globalSettingsDao = globalGlobalSettingsDao;
             _inputDevicesDao = inputDevicesDao;
+            _dialogCoordinator = dialogCoordinator;
 
             _globalSettings = _globalSettingsDao.Read();
             AvailableDevices = _inputDevicesDao.GetInputDevices();
             SelectedDevice = _globalSettings.SelectedInputDevice.DeviceId;
+            _eventAggregator = eventAggregator;
         }
 
         private bool _isNotSearching = true;
@@ -151,6 +158,7 @@ namespace MusicRecognitionProject.ViewModels
                     }
                     else
                     {
+                        _searchCancellationToken = new();
                         IsSpinning = true;
                         IsNotSearching = false;
                         int count = 0;
@@ -158,9 +166,9 @@ namespace MusicRecognitionProject.ViewModels
                         while (true)
                         {
                             string outputFilePath = "tempFile.wav";
-                            if(File.Exists(outputFilePath))
+                            if (File.Exists(outputFilePath))
                                 File.Delete(outputFilePath);
-                            
+
                             int recordingDuration = 10; // seconds
 
                             using (var waveIn = new WaveInEvent { DeviceNumber = SelectedDevice })
@@ -178,25 +186,30 @@ namespace MusicRecognitionProject.ViewModels
 
                             Logger.OutputInfo("Search result: " + result.IsSuccessful);
 
-                             if (result.IsSuccessful && !string.IsNullOrEmpty(result.Content))
+                            if (result.IsSuccessful && !string.IsNullOrEmpty(result.Content))
                             {
-                                string formattedJson =
-                                    JsonConvert.SerializeObject(JsonConvert.DeserializeObject(result.Content),
-                                        Formatting.Indented);
-                                File.WriteAllText("result.txt", formattedJson);
+                                File.WriteAllText("result.txt", result.Content);
+
+                                /*
+                                 *
+                                 * save track logic
+                                 *
+                                 */
+
+                                _eventAggregator.GetEvent<TrackFoundEvent>().Publish();
                                 break;
                             }
 
-                            if (count++ >= 3)
+                            if (++count >= 3)
                             {
-                                MessageBox.Show("No result found", "Error");
+                                _dialogCoordinator.ShowMessageAsync(this, Translations.Instance.Translate("lblError"), Translations.Instance.Translate("lblFoundNothing"));
                                 break;
                             }
                         }
-
-                        IsSpinning = false;
-                        IsNotSearching = true;
                     }
+
+                    IsSpinning = false;
+                    IsNotSearching = true;
                 }
                 catch (Exception ex)
                 {
@@ -204,7 +217,6 @@ namespace MusicRecognitionProject.ViewModels
                 }
             });
         }
-        //todo: change device number
 
         public DelegateCommand<Button> ControlLoadedCommand { get; }
         private void ControlLoaded(Button button)

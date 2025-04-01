@@ -12,7 +12,7 @@ namespace MusicRecognitionProject.Models
     public class AudioDevice
     {
         public AudioDevice(WaveInCapabilities input, int deviceId)
-        {
+        { 
             Channels = input.Channels;
             ProductName = input.ProductName;
             ProductGuid = input.ProductGuid;

@@ -10,11 +10,12 @@
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             controls:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:RecognitionViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Content="Foo" Command="{Binding FooCommand}"/>
+        <!--<Button Content="Foo" Command="{Binding FooCommand}"/>-->
         <StackPanel>
             <ComboBox Width="300" Height="50" Margin="25" IsEnabled="{Binding IsNotSearching}"
                       ItemsSource="{Binding AvailableDevices}" SelectedIndex="{Binding SelectedDevice}">
@@ -36,7 +37,7 @@
                        Width="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=ActualHeight}"/>
             </Button>
 
-            <Label Content="or" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="18"/>
+            <Label Content="{translations:Txt lblOr}" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="18"/>
             <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="{translations:Txt lblUploadFile}" Width="200" Height="50"
                     Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsNotSearching}"/>
 

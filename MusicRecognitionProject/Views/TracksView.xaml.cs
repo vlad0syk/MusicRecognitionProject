@@ -17,11 +17,11 @@ using System.Windows.Shapes;
 namespace MusicRecognitionProject.Views
 {
     /// <summary>
-    /// Interaction logic for HomeView.xaml
+    /// Interaction logic for TracksView.xaml
     /// </summary>
-    public partial class HomeView : UserControl
+    public partial class TracksView : UserControl
     {
-        public HomeView()
+        public TracksView()
         {
             InitializeComponent();
         }

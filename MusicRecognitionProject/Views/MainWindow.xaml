@@ -23,13 +23,13 @@
     </Window.Resources>
     
     <Grid>
-        <controls:MetroTabControl Margin="{StaticResource Margin}">
-            <TabItem Header="{translations:Txt lblHome, FallbackValue=Home}">
-                <views:HomeView/>
-            </TabItem>
-
+        <controls:MetroTabControl Margin="{StaticResource Margin}" SelectedIndex="{Binding SelectedTab}">
             <TabItem Header="{translations:Txt lblRecognition, FallbackValue=Recognition}">
                 <views:RecognitionView/>
+            </TabItem>
+
+            <TabItem Header="{translations:Txt lblTracks, FallbackValue=Tracks}">
+                <views:TracksView/>
             </TabItem>
 
             <TabItem Header="{translations:Txt lblSettings, FallbackValue=Settings}">
