@@ -24,10 +24,15 @@
     
     <Grid>
         <controls:MetroTabControl Margin="{StaticResource Margin}">
-            <TabItem Header="{translations:Txt lblHome}">
+            <TabItem Header="{translations:Txt lblHome, FallbackValue=Home}">
                 <views:HomeView/>
             </TabItem>
-            <TabItem Header="{translations:Txt lblSettings}">
+
+            <TabItem Header="{translations:Txt lblRecognition, FallbackValue=Recognition}">
+                <views:RecognitionView/>
+            </TabItem>
+
+            <TabItem Header="{translations:Txt lblSettings, FallbackValue=Settings}">
                 <views:SettingsView/>
             </TabItem>
         </controls:MetroTabControl>

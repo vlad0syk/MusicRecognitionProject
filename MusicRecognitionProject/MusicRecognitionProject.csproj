@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\vinyl.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\Translations\dictionary.en-GB.translations.xml" />
     <None Remove="Resources\Translations\dictionary.uk-UA.translations.xml" />
   </ItemGroup>
@@ -46,9 +50,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\vinyl.png">
+    <Resource Include="Resources\vinyl.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Resource>
   </ItemGroup>
 
 </Project>
