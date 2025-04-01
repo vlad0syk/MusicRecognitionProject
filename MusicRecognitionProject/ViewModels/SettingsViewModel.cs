@@ -3,6 +3,7 @@ using MusicRecognitionProject.Helpers;
 using MusicRecognitionProject.Models;
 using MusicRecognitionTranslations;
 using System.Globalization;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.VisualBasic.Devices;
 using MusicRecognitionProject.Models.Enums;
 using SpotifyAPI.Web;
@@ -14,8 +15,9 @@ namespace MusicRecognitionProject.ViewModels
 		private readonly ITranslationsDao _translationsDao;
 		private readonly IInputDevicesDao _inputDevicesDao;
 		private readonly IGlobalSettingsDao _globalSettingsDao;
+		private readonly IDialogCoordinator _dialogCoordinator;
 
-		private readonly GlobalSettings _globalSettings;
+        private readonly GlobalSettings _globalSettings;
 
 		#region string SelectedLanguage
 
@@ -100,12 +102,14 @@ namespace MusicRecognitionProject.ViewModels
 
 		#endregion
 
-		public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao, IGlobalSettingsDao globalSettingsDao)
+		public SettingsViewModel(ITranslationsDao translationsDao, IInputDevicesDao inputDevicesDao, IGlobalSettingsDao globalSettingsDao, IDialogCoordinator dialogCoordinator)
 		{
 			_translationsDao = translationsDao;
 			_inputDevicesDao = inputDevicesDao;
 			_globalSettingsDao = globalSettingsDao;
-			var culture = _translationsDao.LoadLanguage();
+			_dialogCoordinator = dialogCoordinator;
+
+            var culture = _translationsDao.LoadLanguage();
 			AvailableLanguages = Translations.Instance.AvailableLanguages.ToList();
 			Translations.Instance.CurrentLanguage = culture;
 			CultureInfo info = new CultureInfo(culture);
@@ -123,10 +127,8 @@ namespace MusicRecognitionProject.ViewModels
                 Platforms.First(p => p.Data == platform).IsSelected = true;
             }
 
-			SaveCommand = new DelegateCommand(Save);
-			CheckedCommand = new DelegateCommand(Checked);
-			UncheckedCommand = new DelegateCommand(Unchecked);
-		}
+            SaveCommand = new DelegateCommand(Save);
+        }
 
 		#region DelegateCommand SaveCommand
 
@@ -143,20 +145,9 @@ namespace MusicRecognitionProject.ViewModels
             globalSettings.SelectedPlatforms = Platforms.Where(p => p.IsSelected).Select(p => p.Data).ToList();
 
             _globalSettingsDao.Write(globalSettings);
-		}
+            _dialogCoordinator.ShowMessageAsync(this, Translations.Instance.Translate("lblSuccess"), Translations.Instance.Translate("lblSettingsSaved"));
+        }
 		 
 		#endregion
-
-		public DelegateCommand CheckedCommand { get; }
-		private void Checked()
-		{
-
-		}
-
-		public DelegateCommand UncheckedCommand { get; }
-		private void Unchecked()
-		{
-
-		}
 	}
 }

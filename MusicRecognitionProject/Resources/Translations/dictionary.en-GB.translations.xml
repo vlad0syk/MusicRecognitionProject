@@ -6,8 +6,8 @@
   <data name="lblMusicRecognitionProject">
     <value>MusicRecognitionProject</value>
   </data>
-  <data name="lblHome">
-    <value>Home</value>
+  <data name="lblTracks">
+    <value>Tracks</value>
   </data>
   <data name="lblSettings">
     <value>Settings</value>
@@ -30,4 +30,23 @@
   <data name="lblSave">
     <value>Save</value>
   </data>
+
+	<data name="lblError">
+		<value>Error!</value>
+	</data>
+	<data name="lblSuccess">
+		<value>Success!</value>
+	</data>
+	<data name="lblUploadFile">
+		<value>Upload a file</value>
+	</data>
+	<data name="lblSettingsSaved">
+		<value>Settings are saved</value>
+	</data>
+	<data name="lblOr">
+		<value>or</value>
+	</data>
+	<data name="lblFoundNothing">
+		<value>No music was found... You can try again tho!</value>
+	</data>
 </root>
